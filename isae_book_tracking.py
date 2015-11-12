@@ -3,6 +3,22 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import BookDBHandler
+import sys
+
+#if sys.argv[1] != None:
+#	print("Need book _id")
+#	
+#if sys.argv[2] not in ['-s','-w']:
+#	print("""
+#		Need second argument 
+#		-s 	: show score
+#		-w 	: write score
+#		""")
+
+#try:
+#	BookDBHandler.get_book_data(para)
+#except UnboundLocalError as err:
+#	print("the query is not available:",err)
 
 class score_handler:
 	''' Colloect Sales Point form http://www.aladin.co.kr or http://www.yes24.com. In case of Kyobobook (site = 1) is 0 score. They don't provide any score.
@@ -51,10 +67,12 @@ class score_handler:
 		return int(st.replace(',','').strip())
 
 	def show_score(self):
-		print ("Kyobo : Not Count\nYes24:%10d\nAladin:%10d".format())
+		print ("Kyobo : Not Count\nYes24:%d\nAladin:%d" % (self.score['yes24'], self.score['aladin']))
 
 	def input_score(self):
 		BookDBHandler.write_score(self._id, self.score)
 
-s = score_handler(1)
+s = score_handler(sys.argv[1])
+print(s.show_score())
 s.input_score()
+
