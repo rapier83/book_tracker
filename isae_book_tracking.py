@@ -2,8 +2,7 @@
 from bs4 import BeautifulSoup
 import urllib.request
 import re
-import mysql.connector
-
+import BookDBHandler
 def get_book_data(book_id, site):
 	config = {
 	'user': 'isaebooks',
@@ -33,14 +32,13 @@ def get_score(book_id, site):
 	url = get_url(book_id, site)
 	soup = get_soup(url)
 
-	if site == 1:
-		score = (0,site)
-		return score
-	if site == 2:
-		score = get_score_yes24(soup)
-	if site == 3:
-		score = get_score_aladin(soup)
-
+	#if site == 1:
+	#	score = (0,site)
+	#	return score
+	#if site == 2:
+	#	score = get_score_yes24(soup)
+	#if site == 3:
+	s = score_collector(url, site)
 	return (score,site)
 
 def get_url(book_id, site):
@@ -66,6 +64,45 @@ def get_soup(url):
 	soup = BeautifulSoup(html_doc, "html.parser")
 	return soup
 
+class score_collector:
+	''' Colloect Sales Point form http://www.aladin.co.kr or http://www.yes24.com. In case of Kyobobook (site = 1) is 0 score. They don't provide any score.
+	'''
+
+	res = None
+	doc = None
+	soup = None
+	score = None
+	site = None
+	
+	def __init__(self, book_id, site):
+		self.url = get_url(book_id, site)
+		self.res = urllib.request.urlopen(self.url)
+		self.doc = self.res.read()
+		self.soup = BeautifulSoup(self.doc, "html.parser")
+		self.t = self.soup
+
+		self.score = self.abst_score(site)
+		print("The score is: ",self.score)
+
+	def abst_score(self,site):
+		if site == 1:
+			self.score = 0
+			self.site = "Kyobo"
+			return score
+		if site == 2:
+			t = self.soup.find('div', class_ = 'ss_book_list')
+			self.site = "Aladin"
+
+		if site == 3:
+			t = self.soup.find('p', class_= 'goods_rating')
+			self.site = "Yes24"
+
+		m = re.search('[0-9]+',t.get_text())
+		self.score = int(m.group())
+		return score
+
+
+
 def get_score_aladin(soup):
 	t = soup.find("div",class_ = "ss_book_list")
 	start_point = t.get_text().index(':') + 2
@@ -79,8 +116,5 @@ def get_score_yes24(soup):
 	return score
 
 
-
-s1 = get_score(1,3)
-s2 = get_score(1,2)
-print(s1,"\n")
-print(s2)
+s = score_collector(1,3)
+print(s)
