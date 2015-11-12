@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import mysql.connector
+from datetime import datetime, date
 
 config = {
 	'user': 'isaebooks',
@@ -8,7 +9,7 @@ config = {
 	'database': 'trackers'
 	}
 
-def get_book_data(book_id, site):
+def get_book_data(book_id):
 	cnx = mysql.connector.connect(**config)
 	cursor = cnx.cursor()
 
@@ -27,25 +28,42 @@ def get_book_data(book_id, site):
 
 	return (target_book,value)
 
-def write_score(book_id, site, score):
+def write_score(_id, score):
 
-	query = 'INSERT INTO `trackers`.`score` (`book_id`, `time`, `kyobo_score`, `aladin_score`, `yes24_score`) VALUES (` +
-		'`' + book_id + '`, ' +
-		'`' + time + + '`, ' +
-		'`' + kyobo_score + '`, ' +
-		'`' + aladin_score + '`)'
+	if type(score) is not dict:
+		raise TypeError('The score argument is not "dict" type')
+	
+	cnx = mysql.connector.connect(**config)
+	cursor = cnx.cursor()
 
+	insert_query = ("INSERT INTO `score` (`book_id`, `time`, `kyobo_score`, `aladin_score`, `yes24_score`) " + "VALUES (%s, %s, %s, %s, %s)")
+	
+	d = (_id, datetime.now(), score['kyobo'], score['yes24'], score['aladin'])
 
-def get_url(book_id, site):
+	data_insert = {
+	'book_id': _id,
+	'time': datetime.now(),
+	'kyobo_score': score['kyobo'],
+	'yes_score': score['yes24'],
+	'aladin_socre': score['aladin']
+	}
+
+	cursor.execute(insert_query, d)
+	cnx.commit()
+
+	cursor.close()
+	cnx.close()
+
+def get_url(book_id):
     kyobo_pre_url = 'http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode='
-    kyobo_sur_url = '&orderClick=LAH&Kc='
     aladin_pre_url = 'http://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=Book&SearchWord='
     yes24_pre_url = 'http://www.yes24.com/searchcorner/Search?keywordAd=&keyword=&domain=ALL&qdomain=%C0%FC%C3%BC&Wcode=001_005&query='
-    target, value = get_book_data(book_id,site)
-    if site == 1:
-        url = kyobo_pre_url + value + kyobo_sur_url
-    if site == 2:
-        url = yes24_pre_url + value
-    if site == 3:
-        url = aladin_pre_url + value
+    target, isbn = get_book_data(book_id)
+    url = {
+    'kyobo': kyobo_pre_url + str(isbn),
+    'yes24': yes24_pre_url + str(isbn),
+    'aladin': aladin_pre_url + str(isbn)
+    }
     return url
+
+

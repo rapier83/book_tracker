@@ -8,7 +8,7 @@ CREATE TABLE `trackers`.`book_list` (
   PRIMARY KEY (`id`)  COMMENT '');
   
   CREATE TABLE `trackers`.`score` (
-  `id` INT NOT NULL COMMENT '',
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT '',
   `time` DATETIME NULL COMMENT '',
   `kyobo_score` INT NULL COMMENT '',
   `aladin_score` INT NULL COMMENT '',
@@ -28,5 +28,13 @@ INSERT INTO `trackers`.`book_list`
 INSERT INTO `trackers`.`book_list`
   (`id`, `title`, `yes24`, `ISBN`, `aladin`)
   VALUES ('2', '고흥, 고흥 사람들', '22793592', '9791195623624', '69353271');
+INSERT INTO `trackers`.`book_list`
+  (`id`, `title`, `yes24`, `ISBN`, `aladin`)
+  VALUES ('0', '미움받을 용기', '000000', '9788996991342', '000000');
+
+INSERT INTO `trackers`.`score`
+  (`book_id`, `time`, `kyobo_score`, `aladin_score`, `yes24_score`)
+  VALUES (1, '2015-11-13 03:28:00', 0, 1, 2);
   
-SELECT id, ISBN FROM book_list WHERE id='1';
+SELECT id, ISBN FROM `trackers`.`book_list`;
+SELECT * FROM `trackers`.`score`;
