@@ -1,13 +1,14 @@
 #-*- coding: utf-8 -*-
 import mysql.connector
 
-def get_book_data(book_id, site):
-	config = {
+config = {
 	'user': 'isaebooks',
 	'password':'isae6200books',
 	'host': 'root.cqrdsk303d9i.ap-northeast-1.rds.amazonaws.com',
 	'database': 'trackers'
 	}
+
+def get_book_data(book_id, site):
 	cnx = mysql.connector.connect(**config)
 	cursor = cnx.cursor()
 
@@ -25,6 +26,14 @@ def get_book_data(book_id, site):
 	cnx.close()
 
 	return (target_book,value)
+
+def write_score(book_id, site, score):
+
+	query = 'INSERT INTO `trackers`.`score` (`book_id`, `time`, `kyobo_score`, `aladin_score`, `yes24_score`) VALUES (` +
+		'`' + book_id + '`, ' +
+		'`' + time + + '`, ' +
+		'`' + kyobo_score + '`, ' +
+		'`' + aladin_score + '`)'
 
 
 def get_url(book_id, site):
