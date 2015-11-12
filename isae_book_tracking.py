@@ -4,19 +4,6 @@ import urllib.request
 import re
 import BookDBHandler
 
-def get_score(book_id, site):
-	url = BookDBHandler.get_url(book_id, site)
-	soup = get_soup(url)
-
-	#if site == 1:
-	#	score = (0,site)
-	#	return score
-	#if site == 2:
-	#	score = get_score_yes24(soup)
-	#if site == 3:
-	s = score_collector(url, site)
-	return (score,site)
-
 def get_soup(url):
 	res = urllib.request.urlopen(url)
 	html_doc = res.read()
