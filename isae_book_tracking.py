@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import urllib.request
+import re
 import mysql.connector
 
 def get_book_data(book_id, site):
@@ -36,7 +37,7 @@ def get_score(book_id, site):
 		score = (0,site)
 		return score
 	if site == 2:
-		return (0,site)
+		score = get_score_yes24(soup)
 	if site == 3:
 		score = get_score_aladin(soup)
 
@@ -66,15 +67,20 @@ def get_soup(url):
 	return soup
 
 def get_score_aladin(soup):
-	t = soup.find("div",class_="ss_book_list")
+	t = soup.find("div",class_ = "ss_book_list")
 	start_point = t.get_text().index(':') + 2
 	score = int(t.get_text()[start_point:])
 	return score
 
 def get_score_yes24(soup):
-	return
+	t = soup.find("p",class_ = "goods_rating")
+	m = re.search('[0-9]+',t.get_text())
+	score = int(m.group())
+	return score
 
 
 
-s = get_score(1,3)
-print(s)
+s1 = get_score(1,3)
+s2 = get_score(1,2)
+print(s1,"\n")
+print(s2)
