@@ -3,10 +3,10 @@ import mysql.connector
 from datetime import datetime, date
 
 config = {
-	'user': 'isaebooks',
-	'password':'isae6200books',
-	'host': 'root.cqrdsk303d9i.ap-northeast-1.rds.amazonaws.com',
-	'database': 'trackers'
+	'user': #id,
+	'password': #password,
+	'host': #address,
+	'database': #db'
 	}
 
 def get_book_data(book_id):
